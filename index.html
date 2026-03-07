@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chúc Mừng Ngày Quốc Tế Phụ Nữ 8/3</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: radial-gradient(circle, #ffafbd, #ffc3a0);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            cursor: pointer;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            text-align: center;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s;
+        }
+
+        h1 {
+            color: #d81b60;
+            font-size: 3rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+
+        .gift-box {
+            font-size: 100px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            display: inline-block;
+        }
+
+        .gift-box:hover {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        #message {
+            display: none;
+            color: #ad1457;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 20px;
+            animation: fadeIn 2s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .falling-item {
+            position: absolute;
+            top: -50px;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body onclick="createFirework(event)">
+
+    <canvas id="canvas"></canvas>
+
+    <div class="container">
+        <h1>Happy Women's Day!</h1>
+        <p style="color: #6a1b9a;">Bấm vào hộp quà để nhận điều bất ngờ</p>
+        <div class="gift-box" onclick="showSurprise(event)">🎁</div>
+        <div id="message">
+            Chúc một nửa thế giới luôn xinh đẹp, <br>
+            hạnh phúc và ngập tràn yêu thương! 🌹❤️
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const items = ['❤️', '💖', '🌹', '🌸', '🌷'];
+
+        // Tạo hiệu ứng rơi (Tim và Hoa)
+        function createFallingItem() {
+            const item = document.createElement('div');
+            item.className = 'falling-item';
+            item.innerHTML = items[Math.floor(Math.random() * items.length)];
+            item.style.left = Math.random() * 100 + 'vw';
+            item.style.fontSize = Math.random() * 20 + 20 + 'px';
+            item.style.opacity = Math.random();
+            item.style.transition = `transform ${Math.random() * 3 + 2}s linear, top ${Math.random() * 3 + 2}s linear`;
+            
+            document.body.appendChild(item);
+
+            setTimeout(() => {
+                item.style.transform = `translateY(${window.innerHeight + 100}px) rotate(${Math.random() * 360}deg)`;
+            }, 100);
+
+            setTimeout(() => {
+                item.remove();
+            }, 5000);
+        }
+
+        setInterval(createFallingItem, 300);
+
+        // Hiệu ứng Pháo hoa đơn giản
+        function createFirework(e) {
+            const colors = ['#ff0000', '#ffeb3b', '#2196f3', '#4caf50', '#ffffff', '#e91e63'];
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.left = e.clientX + 'px';
+                particle.style.top = e.clientY + 'px';
+                particle.style.width = '8px';
+                particle.style.height = '8px';
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.borderRadius = '50%';
+                particle.style.pointerEvents = 'none';
+                particle.style.zIndex = '100';
+                
+                document.body.appendChild(particle);
+
+                const destinationX = (Math.random() - 0.5) * 300;
+                const destinationY = (Math.random() - 0.5) * 300;
+
+                const animation = particle.animate([
+                    { transform: 'translate(0, 0)', opacity: 1 },
+                    { transform: `translate(${destinationX}px, ${destinationY}px)`, opacity: 0 }
+                ], {
+                    duration: 1000,
+                    easing: 'ease-out'
+                });
+
+                animation.onfinish = () => particle.remove();
+            }
+        }
+
+        // Hàm xử lý khi click vào hộp quà
+        function showSurprise(e) {
+            e.stopPropagation(); // Ngăn sự kiện click của body
+            const gift = document.querySelector('.gift-box');
+            const msg = document.getElementById('message');
+            
+            gift.innerHTML = '💝';
+            msg.style.display = 'block';
+            
+            // Tạo hiệu ứng nổ pháo hoa liên tục khi mở quà
+            let count = 0;
+            const interval = setInterval(() => {
+                createFirework({
+                    clientX: Math.random() * window.innerWidth,
+                    clientY: Math.random() * window.innerHeight
+                });
+                count++;
+                if(count > 15) clearInterval(interval);
+            }, 100);
+        }
+
+        // Tự động pháo hoa lúc bắt đầu
+        window.onload = () => {
+            setTimeout(() => {
+                showSurprise({clientX: window.innerWidth/2, clientY: window.innerHeight/2, stopPropagation: () => {}});
+            }, 1000);
+        };
+    </script>
+</body>
+</html>
